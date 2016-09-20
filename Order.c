@@ -56,27 +56,26 @@ void errorlog(int errorID){
 }
 
 int homebrewScanf(char* input, Order* obj){
-    int counter=0, out1=0, out2=0, out3=0, i;
+    int counter=0, out=0, i;
     int looplen= strlen(input)-1;
     char command[30], param1[256], param2[256];
     command[0]='\0', param1[0]='\0', param2[0]='\0';
     input[looplen]='\0', obj->cmd[0]='\0', obj->param1[0]='\0', obj->param2[0]='\0';
     for(i=0; i<=looplen;i++){
-        if(isalnum(input[i])!=0 && counter==0 ){
-            command[out1]=input[i];
-            out1++;
-            if(isalnum(input[i+1])==0) {counter++; command[out1]='\0';}
-            //else out1++;
+        if(isspace(input[i])==0 && counter==0 ){
+            command[out]=input[i];
+            out++;
+            if(isspace(input[i+1])!=0) {counter++; command[out]='\0'; out=0;}
         }
-        else if(isalnum(input[i])!=0 && counter==1){
-            param1[out2]=input[i];
-            out2++;
-            if(isalnum(input[i+1])==0){counter++; param1[out2]='\0';}
+        else if(isspace(input[i])==0 && counter==1){
+            param1[out]=input[i];
+            out++;
+            if(isspace(input[i+1])!=0){counter++; param1[out]='\0'; out=0;}
         }
-        else if(isalnum(input[i])!=0 && counter==2){
-            param2[out3]=input[i];
-            out3++;
-            if(isalnum(input[i+1])==0){counter++; param2[out3]='\0';}
+        else if(isspace(input[i])==0 && counter==2){
+            param2[out]=input[i];
+            out++;
+            if(isspace(input[i+1])!=0){counter++; param2[out]='\0'; out=0;}
         }
         else{}
     }
@@ -87,10 +86,11 @@ int homebrewScanf(char* input, Order* obj){
 }
 
 void getInput(Order* obj){
-    char input[100];
-    fgets(input,100,stdin);
-    obj->paramN = homebrewScanf(input,obj)-1;
-    //obj->paramN = sscanf(input,"%s %s %s %s",obj->cmd,obj->param1,obj->param2, extra) - 1;
+    char input[540];
+    fgets(input,540,stdin);
+    obj->paramN = homebrewScanf(input,obj);
+    
+    //obj->paramN = sscanf(input,"%s %s %s %s",obj->cmd,obj->param1,obj->param2, extra) - 1;//When we can reuse scanf.
 }
 
 int validateHex(Order* obj){
@@ -140,8 +140,7 @@ void executeOrder(Order* obj){
     if (strcasecmp(obj->cmd,"help")==0) obj->id=1;
     else if (strcasecmp(obj->cmd,"load")==0) obj->id=2;
     else if (strcasecmp(obj->cmd,"assemble")==0) obj->id=3;
-    else if (strcasecmp(obj->cmd,"directory")==0) obj->id=4;
-    else if (strcasecmp(obj->cmd,"dir")==0)obj->id=4;
+    else if (strncasecmp(obj->cmd,"directory",3)==0) obj->id=4;
     else if (strcasecmp(obj->cmd,"execute")==0) obj->id=5;
     else if (strcasecmp(obj->cmd,"debug")==0) obj->id=6;
     else if (strcasecmp(obj->cmd,"dump")==0) obj->id=7;
