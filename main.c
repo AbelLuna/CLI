@@ -6,7 +6,7 @@
 
 /* 
  * File:   main.c
- * Author: abelluna
+ * Author: Abel Luna
  *
  * Created on September 1, 2016, 10:08 AM
  */
