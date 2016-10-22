@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "order.h"
+#include "passOne.h"
 
 /*
  * The main function prints out a welcome message and the help menu.

@@ -12,8 +12,10 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "order.h"
-#include "hash.h"
+#include "passOne.h"
 void errorlog();
+int validateHex(char*);
+int checkifDirective(char*, char*,char*,unsigned int*, unsigned int*,FILE*);
 
 /*Help menu. This function returns void and takes no parameters.*/
 void help(){
@@ -35,37 +37,11 @@ void help(){
 void load(){
     printf("Load Reached\n");
 }
+
+
 /*Assemble function stub*/
 void assemble(Order* obj){
-    char one[100], two[200], three[100], four[100];
-    char str[100];
-    hashtable_t *SYMTAB = ht_create(50);
-    hashtable_t *OPTAB = ht_create(100);
-    FILE *fp;
-    printf("Assemble Reached\n");
-    fp = fopen(obj->param1,"r");
-        if(fp != NULL){
-//            size_t int fsize;
-//            //get file size
-//            fseek(fp,0,SEEK_END);
-//            fsize = ftell(fp);
-//            rewind(fp);
-//            char * file_content =malloc(fsize);
-//            fgets(file_content,fsize,fp);
-           while(!feof(fp)){ 
-              // if(feof(fp))break;
-               fgets(str,100,fp);
-               sscanf(str,"%s\t%s\t%s\t%[^n]",one, two, three, four);
-               printf("%s %s %s %s\n", one, two, three, four);
-               one[0]= '\0', two[0]= '\0', three[0]= '\0', four[0] = '\0';
-           }
-           puts("hello?");
-            fclose(fp);
-        }
-    //strncat(obj->param1, ".asm", sizeof(obj->param1);
-    //    else if((fp = fopen(obj->param1, "r+")) != NULL){
-    //    }
-        else errorlog(5);
+    pass1(obj);
     }
 
 /*Directory function stub*/
@@ -164,14 +140,9 @@ void getInput(Order* obj){
  * format. If they are not in hexadecimal format int n is incremented and 
  * calls the function errorlog(int) which prints out an error.
  */
-void validateHex(Order* obj){
-    int n=0;
-    if (obj->param1[strspn(obj->param1, "0123456789abcdefABCDEF")] != 0) n++;
-    if(obj->param2[strspn(obj->param2, "0123456789abcdefABCDEF")] != 0) n++;
-    
-    if(n==0)
-        dump();
-    else errorlog(3);
+int isHex(char* str){
+    if (str[strspn(str, "0123456789abcdefABCDEF")] != 0) return 0;
+    else return 1;
 }
 
 /*
@@ -201,7 +172,7 @@ void testparam(Order* obj){
                 else errorlog(1); break;
         case 6: if(obj->paramN == 0) debug();   //debug
                 else errorlog(1); break;
-        case 7: if(obj->paramN == 2) validateHex(obj); //dump
+        case 7: if(obj->paramN == 2) {if(isHex(obj->param1) && isHex(obj->param2)) dump(); else errorlog(3);} //dump
                 else if(obj->paramN < 2) errorlog(2);
                 else errorlog(1);break;
         case 8:  obj->id=99; break; //exit

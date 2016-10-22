@@ -22,17 +22,7 @@ typedef struct A Order;
 void help();
 void executeOrder(Order* obj);
 void getInput(Order* obj);
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
-
-#ifdef __cplusplus
-}
-#endif
-
+int isHex(char*);
+void errorlog(int);
 #endif /* ORDER_H */
 
