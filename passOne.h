@@ -14,7 +14,7 @@
 #ifndef PASSONE_H
 #define PASSONE_H
 
-int checkifDirective(char* , char* ,char* , unsigned int *, unsigned int *, FILE* );
+int checkifDirective();
 void initializeOPTAB();
 void pass1(Order* obj);
 
