@@ -12,6 +12,8 @@
 #include <ctype.h>
 #include "strmap.h"
 #include "order.h"
+#include "passOne.h"
+#include "passTwo.h"
 StrMap *SYMTAB;
 StrMap *OPTAB;
 char line[100], tempChar[255], label[10], operation[10], operand[10], 
@@ -26,6 +28,7 @@ int handleLabel(void);
 void checkifSTARTexists(void);
 int endDirectiveExists(void);
 void handleLabelErrors(void);
+void pass2(unsigned int,StrMap*,StrMap*);
 
 /*
  * This function places all recognized mnemonics on a hash table that is
@@ -59,7 +62,6 @@ void initializeOPTAB(){
     sm_put(OPTAB,"WD","DC");
 }
 
-
 /*
  * @param obj The struct in which the filename exists.
  * 
@@ -67,15 +69,16 @@ void initializeOPTAB(){
  * the an .asm file provided by obj. If the file is not found, it prints
  * an error to the console.
  */
-void pass1(Order* obj){
+unsigned int pass1(Order* obj){
+    LOCCTRBuffer[0]='\0';
+    LOCCTR=0;
     SYMTAB = sm_new(500);
     OPTAB = sm_new(60);
     initializeOPTAB();
+    int checkContinue;
     if((fp=fopen(obj->param1,"r")) != NULL){
             if(feof(fp)) printf("File is empty.\n");
             else {
-                printf("If Intermediate.txt and SymbolTAB.txt already"
-                        " exist they will be overwritten\n");
                 fI = fopen("IntemediateFile.txt", "w");
                 fp_SYMBOLTABLE =fopen("SymbolTab.txt","w");
                 fgets(line,100,fp);
@@ -88,11 +91,9 @@ void pass1(Order* obj){
                 while(1){
                     if(feof(fp)){
                         printf("EROR: END Directive not found.\n");
-                        printf("Intermediate file and SYMBOLTAB created.\n");
                         fclose(fp);
                         fclose(fI);
                         fclose(fp_SYMBOLTABLE);
-                        sm_delete(SYMTAB);
                         lineNumber=0,labelCounter=0;
                         break;
                     }
@@ -113,7 +114,14 @@ void pass1(Order* obj){
                 }        
             }
         }
-        else errorlog(5);
+        else {
+        errorlog(5);
+        checkContinue=5;
+        }
+    if(checkContinue!=5){
+        pass2(LOCCTR-locationStart, OPTAB, SYMTAB);
+    }
+    return LOCCTR;
 }
 /* 
  * @return Returns 1 if "END" Directive is found. Else, it returns 0.
@@ -124,7 +132,7 @@ void pass1(Order* obj){
  */
 int handleLabel(){
     sscanf(line,"%s %s %s", label, operation, operand);
-    sscanf(LOCCTRBuffer,"%04X",&LOCCTR);
+    sprintf(LOCCTRBuffer,"%04X",LOCCTR);
     if(sm_exists(SYMTAB,label))errflag[0]=1;//Duplicate Labels
     else{
         sm_put(SYMTAB,label,LOCCTRBuffer);
@@ -151,7 +159,15 @@ void handleLabelErrors(){
     if(strlen(label) > 6 || !isalpha(label[0]))errflag[1]=1;//Illegal label
     if(labelCounter>500)errflag[6]=1;//Too many labels
     if((LOCCTR-locationStart)>32767)errflag[7]=1;//program too long
-    if(!strcasecmp(operation,"RSUB"))fprintf(fI,"%s\n","$NONE");
+    if(!strcasecmp(operation,"RSUB"))fprintf(fI,"%s\n","0000");
+    else if(!strcasecmp(operation,"BYTE")){ //do nothing
+    }
+    else if(!strcasecmp(operation,"WORD")){
+        //do nothing
+    }
+    else if(!strcasecmp(operation,"RESB")){
+        //do nothing
+    }
     else fprintf(fI,"%s\n", operand);
 }
 
@@ -164,7 +180,15 @@ void handleLabelErrors(){
 void handleNonLabelErrors(){
     if(labelCounter>500)errflag[6]=1;
     if((LOCCTR-locationStart)>32767)errflag[7]=1;
-    if(!strcasecmp(operation,"RSUB"))fprintf(fI,"%s\n","$NONE");
+    if(!strcasecmp(operation,"RSUB"))fprintf(fI,"%s\n","0000");
+    else if(!strcasecmp(operation,"BYTE")){ //do nothing
+    }
+    else if(!strcasecmp(operation,"WORD")){
+        //do nothing
+    }
+    else if(!strcasecmp(operation,"RESB")){
+        //do nothing
+    }
     else fprintf(fI,"%s\n", operand);
 }
 
@@ -183,8 +207,7 @@ int endDirectiveExists(){
         fclose(fp);
         fclose(fI);
         fclose(fp_SYMBOLTABLE);
-        sm_delete(SYMTAB);
-        printf("Intermediate file and SYMBOLTAB successfully created.\n");
+        
         return 1;
     }
     else return 0;
@@ -220,25 +243,25 @@ int handleNonLabel(){
  */
 void checkifSTARTexists(void){
     if(!strcasecmp(operation,"START")){
-    if (strlen(operand)){//Checking if operand is missing
-        if(isHex(operand))LOCCTR+=(int)strtol(operand, NULL, 16);//read as hex
-        else {
-           printf("Line %u: Illegal Operand on START directive\n",lineNumber);
-           strncpy(operand,"0", sizeof(operand));
-           errflag[4]=1;//Illegal operand 
-           LOCCTR+=atoi(operand);
+        if (strlen(operand)){//Checking if operand is missing
+            if(isHex(operand))LOCCTR+=(int)strtol(operand, NULL, 16);//read as hex
+            else {
+               printf("Line %u: Illegal Operand on START directive\n",lineNumber);
+               strncpy(operand,"0", sizeof(operand));
+               errflag[4]=1;//Illegal operand 
+               LOCCTR+=atoi(operand);
+            }
         }
-    }
-    else {
-        printf("Line %u: Missing Operand on START directive\n", lineNumber);
-        strncpy(operand,"0",sizeof(operand));
-        errflag[4]=1;//Missing operand 
-        LOCCTR+=atoi(operand);
-    }
-    sscanf(LOCCTRBuffer, "%x",&LOCCTR);//Hex to string to be parsed by hash.
+        else {
+            printf("Line %u: Missing Operand on START directive\n", lineNumber);
+            strncpy(operand,"0",sizeof(operand));
+            errflag[4]=1;//Missing operand 
+            LOCCTR+=atoi(operand);
+        }
+    sprintf(LOCCTRBuffer,"%04X",LOCCTR);
     sm_put(SYMTAB,label,LOCCTRBuffer);//Assuming label exists.
     locationStart=LOCCTR; //start location to be compared later.
-    fprintf(fI,"%s%04X\n%s\n%s\n",line,LOCCTR,"$NONE", operand);
+    fprintf(fI,"%s%04X\n%s\n%s\n",line,LOCCTR,"START", operand);
     fprintf(fI,"%u%u%u%u%u%u%u%u\n",errflag[0],errflag[1],errflag[2],
             errflag[3],errflag[4],errflag[5],errflag[6],errflag[7]);
     fprintf(fp_SYMBOLTABLE,"%s\t%04X\n",label, LOCCTR);
@@ -246,6 +269,7 @@ void checkifSTARTexists(void){
     memset(errflag, 0, sizeof(errflag));//resets int array to all zeroes.
     }
 }
+
 
 /* 
  * @return Returns 0 if Directive "WORD","BYTE","RESW","RESB" or "END"
@@ -272,7 +296,9 @@ int checkifDirective(void){
     if(!strcasecmp(operation,"WORD")){
         if(strlen(operand)==0) errflag[3]=1;
         LOCCTR+=3;
-        fprintf(fI,"%s\n","$NONE");
+        fprintf(fI,"%s\n","WORD");
+        sprintf(operand,"%06X",atoi(operand));
+        fprintf(fI,"%s\n",operand);
         return 0;
     }
     else if(!strcasecmp(operation,"RESW")){
@@ -280,32 +306,55 @@ int checkifDirective(void){
         else { 
             if(isHex(operand))LOCCTR += 3*atoi(operand);
         } 
-        fprintf(fI,"%s\n","$NONE");
+        fprintf(fI,"%s\n","RESW");
         return 0;
     }
     else if(!strcasecmp(operation,"RESB")){
+        fprintf(fI,"%s\n","RESB");
         if(strlen(operand)==0) errflag[3]=1;//missing operand
         else { 
+            char temp[10];
             if(isHex(operand))LOCCTR += atoi(operand);
+            sprintf(temp,"%04X",LOCCTR);
+            fprintf(fI,"%s\n",temp);
         } 
-        fprintf(fI,"%s\n","$NONE");
+        
         return 0;
     }
     else if(!strcasecmp(operation,"BYTE")){
-        if(strlen(operand)==0) errflag[3]=1;//missing operand
+        if(strlen(operand)==0){
+           errflag[3]=1;//missing operand 
+           fprintf(fI,"%s\n","BYTE");
+        } 
         else {
+            fprintf(fI,"%s\n","BYTE");
+            char hexstr[10];
             if(operand[0]=='C'){//does not check complete format
                 LOCCTR+=strlen(operand)-3; //-3 for the C ' and '
+                int i,j=0;
+                for(i=2;i<(strlen(operand)-1);i++){
+                    sprintf(hexstr+j*2,"%02X",operand[i]);
+                    j++;
+                }
+                fprintf(fI,"%s\n", hexstr);
             }
-            else if(operand[0]=='X')
-                LOCCTR+=(strlen(operand)-3)/2;//Divide by 2 because for byte
-            else errflag[3]=1;//illegal operand
+            else if(operand[0]=='X'){
+                LOCCTR+=(strlen(operand)-3)/2;//Divide by 2 because its byte
+                int i;
+                for(i=2;i<(strlen(operand)-1);i++){
+                    fprintf(fI,"%c",operand[i]);
+                }
+               fprintf(fI,"\n");
+            }
+            else {
+                errflag[3]=1;//illegal operand}
+                fprintf(fI,"$NONE");
+            }
         }
-        fprintf(fI,"%s\n","$NONE");
         return 0;
     }
     else if(!strcasecmp(operation,"END")){
-    fprintf(fI,"%s\n","$NONE");
+    fprintf(fI,"%s\n","END");
     return 0;
     }
     else if(!sm_exists(OPTAB,operation)){//If OPCODE does not exist
@@ -315,8 +364,7 @@ int checkifDirective(void){
     return 0;
     }
     else {//If opcode exists
-        sm_get(OPTAB,operation,buffer,sizeof(buffer));
-        fprintf(fI,"%s\n",buffer);//value of mnemonic
+        fprintf(fI,"%s\n",operation);//
         LOCCTR+=3;
         return 1;
     }

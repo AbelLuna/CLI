@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include "order.h"
 #include "passOne.h"
+#include "sic.h"
 
 /*
  * The main function prints out a welcome message and the help menu.
@@ -24,6 +25,7 @@
 int main(int argc, char** argv) {
     printf("Welcome to the command line interpretor.\n");
     help();
+    SICInit();
     while(1){
         printf(">");
         Order cmd;

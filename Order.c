@@ -13,35 +13,50 @@
 #include <ctype.h>
 #include "order.h"
 #include "passOne.h"
+#include "passTwo.h"
+#include "strmap.h"
+#include "load.h"
+#include "sic.h"
+
 void errorlog();
 int validateHex(char*);
 int checkifDirective(char*, char*,char*,unsigned int*, unsigned int*,FILE*);
-
+void pass2(unsigned int);
+Loader loader;
+ADDRESS start;
 /*Help menu. This function returns void and takes no parameters.*/
 void help(){
-    printf("-\n");
-    printf("load filename : will call the load function to load the specified"
-            "file.\n");
-    printf("execute : will allow you to execute in debug mode.\n");
-    printf("dump start end : will call the dump function, passing the values"
-            "of start and end. Start and end will be hexadecimal values.\n");
-    printf("help : Will print out a list of available commands.\n");
-    printf("assemble filename : will assemble and SIC assembly language "
-            "program into a load module and store it in a file.\n");
-    printf("directory : will list the files stored in the current "
-            "directory.\n");
-    printf("exit : will exit from the simulator.\n");
-    printf("-\n");
+    puts("-");
+    puts("load filename : will call the load function to load the specified"
+            "file.");
+    puts("execute : will allow you to execute in debug mode.");
+    puts("dump start end : will call the dump function, passing the values"
+            "of start and end. Start and end will be hexadecimal values.");
+    puts("help : Will print out a list of available commands.");
+    puts("assemble filename : will assemble and SIC assembly language "
+            "program into a load module and store it in a file.");
+    puts("directory : will list the files stored in the current "
+            "directory.");
+    puts("exit : will exit from the simulator.");
+    puts("-");
 }
 /*Load function stub*/
-void load(){
-    printf("Load Reached\n");
+void load(Order* obj){
+    FILE* fp;
+    if((fp=fopen(obj->param1,"r"))!=NULL){
+        puts("Loading...");
+        loader = loadObj(fp);
+        puts("Loaded successfully...");
+    }
+    else errorlog(5);
 }
 
 
 /*Assemble function stub*/
 void assemble(Order* obj){
+    printf("Assembling %s ...\n", obj->param1);
     pass1(obj);
+   puts("Assemble done.");
     }
 
 /*Directory function stub*/
@@ -50,15 +65,67 @@ void directory(){
 }
 /*Execute function stub*/
 void execute(){
-    printf("Execute Reached\n");
+    puts("Executing...");
+    start = loader.start;
+    SICRun(&start,FALSE);
+    puts("Program Executed successfully...");
 }
 /*debug function stub*/
 void debug(){
-    printf("Debug Reached\n");
+    puts("Debug Reached.");
 }
 /*Dump function stub*/
-void dump(){
-    printf("Dump Reached\n");
+void dump(Order* obj){
+    unsigned int go = 1;
+    int start = strtol(obj->param1,NULL,16);//s startAddress
+    int end = strtol(obj->param2,NULL,16);//e endAddress
+    if(start < 0){
+        errorlog(7);
+        go=0;
+    }
+    if(end < 0){
+        errorlog(8);
+        go=0;
+    }
+    if(start > end){
+        errorlog(9);
+        go=0;
+    }
+    if(start>32767){
+        errorlog(10);
+        go=0;
+    }
+    if(end>32767){
+        errorlog(11);
+        go=0;
+    }
+    unsigned int s = strtol(obj->param1,NULL,16);//s startAddress
+    unsigned int e = strtol(obj->param2,NULL,16);//e endAddress
+    if(go){
+        printf("Dumping from %04Xh to %04Xh... \n", s, e);
+        unsigned int counter=0;
+        BYTE temp;
+        puts("            +0  +1  +2  +3  +4  +5  +6  +7  +8  +9  +A  +B  +C  +D  +E  +F");
+        if(s%16==0) printf("%04Xh:%04Xh", s, s+16);
+        else printf("%04Xh:%04Xh", s, e);
+        while(s<=e){
+            GetMem(s,&temp,0);
+            printf(" %02X ",temp);
+            if(s%16==15 && s<e){
+                if (counter%240==239){
+                  printf("\nPress Enter to continue to dump...");
+                  getc(stdin);
+                  puts("            +0  +1  +2  +3  +4  +5  +6  +7  +8  +9  +A  +B  +C  +D  +E  +F");
+              }
+              printf("\n%04Xh:%04Xh",s, s+16);  
+                
+            }
+            
+            counter++;
+            s++;
+        }
+        puts("");
+    }
 }
 
 
@@ -68,13 +135,19 @@ void dump(){
  */
 void errorlog(int errorID){
     switch(errorID){
-        case 1: printf("Too many parameters.\n");break;
-        case 2: printf("Too few parameters.\n");break;
-        case 3: printf("Parameters not in hexadecimal format.\n");break;
-        case 4: printf("Unrecognized command. Type 'help' for a list of"
-                "available commands.\n");break;
-        case 5: printf("Could not open file.\n");break;
-        default: printf("An unexpected error occurred.\n");
+        case 1: puts("Error: Too many parameters.");break;
+        case 2: puts("Error: Too few parameters.");break;
+        case 3: puts("Error: Parameters not in hexadecimal format.");break;
+        case 4: puts("Error: Unrecognized command. Type 'help' for a list of"
+                "available commands.");break;
+        case 5: puts("Error: Could not open file.");break;
+        case 6: puts("Error: Hex range is out of bounds.");break;
+        case 7: puts("Error: Start address is negative.");break;
+        case 8: puts("Error: End address is negative.");break;
+        case 9: puts("Error: Start address is larger than end address.");break;
+        case 10: puts("Error: Start address is out of range 0x0000 - 0x7FFF");break;
+        case 11: puts("Error: End address is out of range 0x0000 - 0x7FFF");break;
+        default: puts("Error: An unexpected error occurred.");
     }
 }
 
@@ -160,7 +233,7 @@ void testparam(Order* obj){
     switch (obj->id){
         case 1: if(obj->paramN == 0) help();    //help
                 else errorlog(1); break;
-        case 2: if(obj->paramN == 1) load();    //load
+        case 2: if(obj->paramN == 1) load(obj);    //load
                 else if (obj->paramN < 1) errorlog(2);
                 else errorlog(1);break;
         case 3: if(obj->paramN == 1) assemble(obj);   //assemble
@@ -172,11 +245,11 @@ void testparam(Order* obj){
                 else errorlog(1); break;
         case 6: if(obj->paramN == 0) debug();   //debug
                 else errorlog(1); break;
-        case 7: if(obj->paramN == 2) {if(isHex(obj->param1) && isHex(obj->param2)) dump(); else errorlog(3);} //dump
+        case 7: if(obj->paramN == 2) {if(isHex(obj->param1) && isHex(obj->param2)) dump(obj); else errorlog(3);} //dump
                 else if(obj->paramN < 2) errorlog(2);
                 else errorlog(1);break;
         case 8:  obj->id=99; break; //exit
-        default: printf("Unexpected Error.\n");
+        default: puts("Unexpected Error.");
     }
 }
 /*

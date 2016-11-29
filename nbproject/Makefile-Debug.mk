@@ -36,7 +36,13 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/Order.o \
-	${OBJECTDIR}/main.o
+	${OBJECTDIR}/dump.o \
+	${OBJECTDIR}/load.o \
+	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/passOne.o \
+	${OBJECTDIR}/passTwo.o \
+	${OBJECTDIR}/sicengine.o \
+	${OBJECTDIR}/strmap.o
 
 
 # C Compiler Flags
@@ -68,10 +74,40 @@ ${OBJECTDIR}/Order.o: Order.c
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Order.o Order.c
 
+${OBJECTDIR}/dump.o: dump.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/dump.o dump.c
+
+${OBJECTDIR}/load.o: load.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/load.o load.c
+
 ${OBJECTDIR}/main.o: main.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
+
+${OBJECTDIR}/passOne.o: passOne.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/passOne.o passOne.c
+
+${OBJECTDIR}/passTwo.o: passTwo.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/passTwo.o passTwo.c
+
+${OBJECTDIR}/sicengine.o: sicengine.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sicengine.o sicengine.c
+
+${OBJECTDIR}/strmap.o: strmap.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/strmap.o strmap.c
 
 # Subprojects
 .build-subprojects:

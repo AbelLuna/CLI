@@ -13,10 +13,12 @@
 
 #ifndef PASSONE_H
 #define PASSONE_H
-
+#include "strmap.h"
 int checkifDirective();
 void initializeOPTAB();
-void pass1(Order* obj);
+extern StrMap test;
+extern struct StrMap OPTAB2;
+unsigned int pass1(Order*);
 
 #endif /* PASSONE_H */
 

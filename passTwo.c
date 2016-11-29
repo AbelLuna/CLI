@@ -83,13 +83,14 @@ int checkFlagError(char* flags, int symbolerr) {
 void checkSTARTDirective(unsigned int prgSize, Record* record) {
     unsigned int length;
     char line[100], LOCCTR[10], operation[10], operand[10], 
-         flags[10], firstObjectLine[60];
+         flags[10], firstObjectLine[60], name[9];
     fgets(line, sizeof (line), fp);
     fgets(LOCCTR, sizeof (LOCCTR), fp);
     fgets(operation, sizeof (operation), fp);
     fgets(operand, sizeof (operand), fp);
     fgets(flags, sizeof (flags), fp);
     sscanf(line, "%[^\n]", line);
+    sscanf(line, "%s", name);
     sscanf(LOCCTR, "%s", LOCCTR);
     sscanf(operation, "%s", operation);
     sscanf(operand, "%s", operand);
@@ -103,20 +104,20 @@ void checkSTARTDirective(unsigned int prgSize, Record* record) {
     char prgName[7];
     sscanf(line,"%s",prgName);
     fprintf(fObj, "%s", prgName);
-    if (length = (strlen(operation)) < 6) {
+    if (length = (strlen(name)) < 6) {
         int i;
-        for (i = 0; i < (length); i++)
+        for (i = 0; i <= (length); i++)
             fprintf(fObj, " ");
     }
     if (length = (strlen(LOCCTR)) < 6) {
         int i;
-        for (i = 0; i < (length); i++)
+        for (i = 0; i <= (length); i++)
             fprintf(fObj, "0");
         fprintf(fObj, "%s", LOCCTR);
     }
     if (length = (snprintf(0, 0, "%u", prgSize)) < 6) {
         int i;
-        for (i = 0; i < (length); i++)
+        for (i = 0; i <= (length); i++)
             fprintf(fObj, "0");
         fprintf(fObj, "%X\n", prgSize);
     }
@@ -345,10 +346,12 @@ void handleLine2(Record* record, char* operation, char* operand,
         toRecord(record, operand);
     } else if (!strcasecmp("RESW", operation)) {
         printTRecord(record);
+        printToListing(record);
     }
     else if (!strcasecmp("RESB", operation)) {
         strncpy(record->LOCCTR,operand,sizeof(record->LOCCTR));
         printTRecord(record);
+        printToListing(record);
     }
     else {
         memset(record->opcode_addr,0,sizeof(record->opcode_addr));
