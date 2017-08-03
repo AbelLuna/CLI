@@ -21,8 +21,8 @@ FC=gfortran
 AS=as
 
 # Macros
-CND_PLATFORM=GNU-Linux
-CND_DLIB_EXT=so
+CND_PLATFORM=Cygwin_64-Windows
+CND_DLIB_EXT=dll
 CND_CONF=Debug
 CND_DISTDIR=dist
 CND_BUILDDIR=build
@@ -35,10 +35,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/Order.o \
-	${OBJECTDIR}/dump.o \
 	${OBJECTDIR}/load.o \
 	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/order.o \
 	${OBJECTDIR}/passOne.o \
 	${OBJECTDIR}/passTwo.o \
 	${OBJECTDIR}/sicengine.o \
@@ -46,7 +45,7 @@ OBJECTFILES= \
 
 
 # C Compiler Flags
-CFLAGS=
+CFLAGS=-m64
 
 # CC Compiler Flags
 CCFLAGS=
@@ -63,48 +62,43 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cli
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cli.exe
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cli: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cli.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cli ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/Order.o: Order.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/Order.o Order.c
-
-${OBJECTDIR}/dump.o: dump.c 
-	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/dump.o dump.c
-
-${OBJECTDIR}/load.o: load.c 
+${OBJECTDIR}/load.o: load.c nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/load.o load.c
 
-${OBJECTDIR}/main.o: main.c 
+${OBJECTDIR}/main.o: main.c nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
 
-${OBJECTDIR}/passOne.o: passOne.c 
+${OBJECTDIR}/order.o: order.c nbproject/Makefile-${CND_CONF}.mk
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/order.o order.c
+
+${OBJECTDIR}/passOne.o: passOne.c nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/passOne.o passOne.c
 
-${OBJECTDIR}/passTwo.o: passTwo.c 
+${OBJECTDIR}/passTwo.o: passTwo.c nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/passTwo.o passTwo.c
 
-${OBJECTDIR}/sicengine.o: sicengine.c 
+${OBJECTDIR}/sicengine.o: sicengine.c nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sicengine.o sicengine.c
 
-${OBJECTDIR}/strmap.o: strmap.c 
+${OBJECTDIR}/strmap.o: strmap.c nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/strmap.o strmap.c
@@ -115,7 +109,6 @@ ${OBJECTDIR}/strmap.o: strmap.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/cli
 
 # Subprojects
 .clean-subprojects:

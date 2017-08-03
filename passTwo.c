@@ -1,12 +1,27 @@
-/* 
- * File:   passTwo.c
- * Author: Abel Luna
- * Username: aluna
- *
- * The purpose of passTwo is to create a Listing file and an Object File
- * from a .asm file. passTwo makes use of the files produced in passOne.
- * They are deleted regardless of errors in this pass.
- */
+/*
+                         *******************
+******************************* PASSTWO  *******************************
+                         ******************* 
+**                                                                   **
+** project : CLI                                                     **
+** filename : passTwo.c                                                **
+** version : 1                                                       **
+** date : July 29, 2017                                              **
+**                                                                   **
+***********************************************************************
+VERSION HISTORY:
+----------------
+Version : 1
+Date : July 29, 2017
+Revised by : Abel Luna
+Description : Original version.
+*/
+
+/****************************************************************************/
+/**                                                                        **/
+/**                             MODULES USED                               **/
+/**                                                                        **/
+/****************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +30,19 @@
 #include "order.h"
 #include "passTwo.h"
 
+/****************************************************************************/
+/**                                                                        **/
+/**                            GLOBAL VARIABLES                            **/
+/**                                                                        **/
+/****************************************************************************/
+
 FILE *fList, *fObj, *fp;
+
+/****************************************************************************/
+/**                                                                        **/
+/**                             LOCAL FUNCTIONS                            **/
+/**                                                                        **/
+/****************************************************************************/
 
 /*
  * @param flags These are the errors produced from PassOne in an 8-bit format
@@ -411,5 +438,8 @@ void pass2(unsigned int prgSize, StrMap* OPTAB, StrMap* SYMTAB) {
     }
 }
 
-
-
+/****************************************************************************/
+/**                                                                        **/
+/**                                 EOF                                    **/
+/**                                                                        **/
+/****************************************************************************/

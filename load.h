@@ -1,19 +1,39 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/* 
- * File:   load.h
- * Author: Abel Luna 
- *
- * Created on November 26, 2016, 2:45 PM
- */
+                         *******************
+*******************************  LOAD  *******************************
+                         ******************* 
+**                                                                   **
+** project : CLI                                                     **
+** filename : load.h                                                **
+** version : 1                                                       **
+** date : July 29, 2017                                              **
+**                                                                   **
+***********************************************************************
+VERSION HISTORY:
+----------------
+Version : 1
+Date : July 29, 2017
+Revised by : Abel Luna
+Description : Original version.
+*/
 
 #ifndef LOAD_H
 #define LOAD_H
+
+/****************************************************************************/
+/**                                                                        **/
+/**                             MODULES USED                               **/
+/**                                                                        **/
+/****************************************************************************/
+
 #include "sic.h"
+
+/****************************************************************************/
+/**                                                                        **/
+/**                       TYPEDEFS AND STRUCTURES                          **/
+/**                                                                        **/
+/****************************************************************************/
+
 struct C{
     ADDRESS address;//
     ADDRESS start;
@@ -24,6 +44,10 @@ typedef struct C Loader;
 
 Loader loadObj(FILE *);
 
-
 #endif /* LOAD_H */
 
+/****************************************************************************/
+/**                                                                        **/
+/**                                 EOF                                    **/
+/**                                                                        **/
+/****************************************************************************/

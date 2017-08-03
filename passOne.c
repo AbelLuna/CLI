@@ -1,11 +1,27 @@
-/* 
- * File:   passOne.c
- * Author: Abel Luna
- * Username: aluna
- *
- * The purpose of passOne is to create an intermediate file that is derived 
- * from an .asm file containing SIC assembly code. 
- */
+/*
+                         *******************
+******************************* PASSONE  *******************************
+                         ******************* 
+**                                                                   **
+** project : CLI                                                     **
+** filename : passOne.c                                                **
+** version : 1                                                       **
+** date : July 29, 2017                                              **
+**                                                                   **
+***********************************************************************
+VERSION HISTORY:
+----------------
+Version : 1
+Date : July 29, 2017
+Revised by : Abel Luna
+Description : Original version.
+*/
+
+/****************************************************************************/
+/**                                                                        **/
+/**                             MODULES USED                               **/
+/**                                                                        **/
+/****************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,27 +30,31 @@
 #include "order.h"
 #include "passOne.h"
 #include "passTwo.h"
+
+/****************************************************************************/
+/**                                                                        **/
+/**                            GLOBAL VARIABLES                            **/
+/**                                                                        **/
+/****************************************************************************/
+
 StrMap *SYMTAB;
 StrMap *OPTAB;
 char line[100], tempChar[255], label[10], operation[10], operand[10], 
         buffer[255],LOCCTRBuffer[8];
 unsigned int LOCCTR, errflag[8], labelCounter, lineNumber,locationStart;
-FILE *fp;
-FILE *fI;
-FILE *fp_SYMBOLTABLE;
-int checkifDirective(void);
-int handleNonLabel(void);
-int handleLabel(void);
-void checkifSTARTexists(void);
-int endDirectiveExists(void);
-void handleLabelErrors(void);
-void pass2(unsigned int,StrMap*,StrMap*);
+FILE *fp, *fI, *fp_SYMBOLTABLE;
+
+/****************************************************************************/
+/**                                                                        **/
+/**                             LOCAL FUNCTIONS                            **/
+/**                                                                        **/
+/****************************************************************************/
 
 /*
  * This function places all recognized mnemonics on a hash table that is
  * to be compared with the mnemonics on an .asm file.
  */
-void initializeOPTAB(){
+void initializeOPTAB(void){
     sm_put(OPTAB,"ADD","18");
     sm_put(OPTAB,"AND","58");
     sm_put(OPTAB,"COMP","28");
@@ -130,7 +150,7 @@ unsigned int pass1(Order* obj){
  * SYMBOLTABLE using sm_put, writes the label and location counter to
  *  the SYMBOLTAB.txt file,  
  */
-int handleLabel(){
+int handleLabel(void){
     sscanf(line,"%s %s %s", label, operation, operand);
     sprintf(LOCCTRBuffer,"%04X",LOCCTR);
     if(sm_exists(SYMTAB,label))errflag[0]=1;//Duplicate Labels
@@ -155,7 +175,7 @@ int handleLabel(){
  * intermediate file in the special case of an RSUB instruction to be
  *  present.
  */
-void handleLabelErrors(){
+void handleLabelErrors(void){
     if(strlen(label) > 6 || !isalpha(label[0]))errflag[1]=1;//Illegal label
     if(labelCounter>500)errflag[6]=1;//Too many labels
     if((LOCCTR-locationStart)>32767)errflag[7]=1;//program too long
@@ -177,7 +197,7 @@ void handleLabelErrors(){
  * intermediate file in the special case of an RSUB instruction to be
  *  present.
  */
-void handleNonLabelErrors(){
+void handleNonLabelErrors(void){
     if(labelCounter>500)errflag[6]=1;
     if((LOCCTR-locationStart)>32767)errflag[7]=1;
     if(!strcasecmp(operation,"RSUB"))fprintf(fI,"%s\n","0000");
@@ -199,7 +219,7 @@ void handleNonLabelErrors(){
  * directive. If it is found, it closes all FILE streams, and resets all 
  * values.
  */
-int endDirectiveExists(){
+int endDirectiveExists(void){
     if(strcasecmp(operation,"END")==0){
         line[0]='\0',operand[0]='\n', label[0]='\0', operation[0]='\0';
         labelCounter=0, lineNumber=0;
@@ -220,7 +240,7 @@ int endDirectiveExists(){
  * to an intermediate file. It then resets the flags and all other 
  * values.
  */
-int handleNonLabel(){
+int handleNonLabel(void){
     sscanf(line,"%s %s",operation,operand);
     checkifDirective();
     handleNonLabelErrors();
@@ -370,4 +390,8 @@ int checkifDirective(void){
     }
 } 
 
-
+/****************************************************************************/
+/**                                                                        **/
+/**                                 EOF                                    **/
+/**                                                                        **/
+/****************************************************************************/

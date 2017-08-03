@@ -1,17 +1,40 @@
-/* 
- * File:   load.c
- * Author: Abel Luna
- * Username: aluna
- *
- * The purpose of load is to place the bytes from the object file into the 
- * SIC engine.
- */
+/*
+                         *******************
+*******************************  LOAD  *******************************
+                         ******************* 
+**                                                                   **
+** project : CLI                                                     **
+** filename : load.c                                                **
+** version : 1                                                       **
+** date : July 29, 2017                                              **
+**                                                                   **
+***********************************************************************
+VERSION HISTORY:
+----------------
+Version : 1
+Date : July 29, 2017
+Revised by : Abel Luna
+Description : Original version.
+*/
+
+/****************************************************************************/
+/**                                                                        **/
+/**                             MODULES USED                               **/
+/**                                                                        **/
+/****************************************************************************/
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
 #include "sic.h"
 #include "load.h"
+
+/****************************************************************************/
+/**                                                                        **/
+/**                             LOCAL FUNCTIONS                            **/
+/**                                                                        **/
+/****************************************************************************/
 
 void loadBytes(Loader* loader){
     int i=0;
@@ -41,7 +64,6 @@ void setBytes(char* line, Loader* loader){
     loadBytes(loader);
 }
 
-
 Loader loadObj(FILE* objectFile){
     Loader loader;
     while(!feof(objectFile)){
@@ -64,3 +86,9 @@ Loader loadObj(FILE* objectFile){
     return loader;
     
 }
+
+/****************************************************************************/
+/**                                                                        **/
+/**                                 EOF                                    **/
+/**                                                                        **/
+/****************************************************************************/

@@ -1,13 +1,27 @@
+/*
+                         *******************
+******************************* MAIN  *******************************
+                         ******************* 
+**                                                                   **
+** project : CLI                                                     **
+** filename : main.c                                                 **
+** version : 1                                                       **
+** date : July 29, 2017                                              **
+**                                                                   **
+***********************************************************************
+VERSION HISTORY:
+----------------
+Version : 1
+Date : July 29, 2017
+Revised by : Abel Luna
+Description : Original version.
+*/
 
-
-/*      SIC Assembler
- * File:   main.c
- * Author: Abel Luna
- * CMPE 3334.01
- * Username: aluna
- * 
- * This program will assemble assembly code recognized by the SIC engine and output object code.
- */
+/****************************************************************************/
+/**                                                                        **/
+/**                             MODULES USED                               **/
+/**                                                                        **/
+/****************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,25 +29,24 @@
 #include "passOne.h"
 #include "sic.h"
 
-/*
- * The main function prints out a welcome message and the help menu.
- * It creates a struct called Order and calls the function getInput(Order*)
- * to break up the string and calls the function executeOrder(Order*) to 
- * call the appropriate command. cmd.id is assigned in the function
- * executeOrder(Order*). 99 represents the command "exit".
- */
-int main(int argc, char** argv) {
+
+int main(void) {
     printf("Welcome to the command line interpretor.\n");
     help();
     SICInit();
-    while(1){
-        printf(">");
-        Order cmd;
-        getInput(&cmd);
-        executeOrder(&cmd);
-        if(cmd.id==99) break;
+    int loop = TRUE;
+    while(loop){
+        printf("$>");
+        Order *cmd = malloc(sizeof(Order));
+        getInput(cmd);
+        executeOrder(cmd);
+        if(cmd->id==99) loop = FALSE; //id condition means exit.
+        free(cmd);
     }
-
     return (EXIT_SUCCESS);
 }
-
+/****************************************************************************/
+/**                                                                        **/
+/**                                 EOF                                    **/
+/**                                                                        **/
+/****************************************************************************/

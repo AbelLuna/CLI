@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="97">
+<configurationDescriptor version="100">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>load.h</itemPath>
       <itemPath>order.h</itemPath>
+      <itemPath>passOne.h</itemPath>
+      <itemPath>passTwo.h</itemPath>
+      <itemPath>sic.h</itemPath>
+      <itemPath>strmap.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -13,8 +18,13 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>Order.c</itemPath>
+      <itemPath>load.c</itemPath>
       <itemPath>main.c</itemPath>
+      <itemPath>order.c</itemPath>
+      <itemPath>passOne.c</itemPath>
+      <itemPath>passTwo.c</itemPath>
+      <itemPath>sicengine.c</itemPath>
+      <itemPath>strmap.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -32,17 +42,41 @@
   <confs>
     <conf name="Debug" type="1">
       <toolsSet>
-        <compilerSet>default</compilerSet>
+        <compilerSet>Cygwin_64|Cygwin</compilerSet>
         <dependencyChecking>true</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
+        <rebuildPropChanged>true</rebuildPropChanged>
       </toolsSet>
       <compileType>
+        <cTool>
+          <architecture>2</architecture>
+          <commandlineTool>gcc</commandlineTool>
+        </cTool>
       </compileType>
-      <item path="Order.c" ex="false" tool="0" flavor2="0">
+      <item path="load.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="load.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="order.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="order.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="passOne.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="passOne.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="passTwo.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="passTwo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sicengine.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="strmap.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="strmap.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -65,11 +99,31 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
-      <item path="Order.c" ex="false" tool="0" flavor2="0">
+      <item path="load.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="load.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="order.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="order.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="passOne.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="passOne.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="passTwo.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="passTwo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sicengine.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="strmap.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="strmap.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
